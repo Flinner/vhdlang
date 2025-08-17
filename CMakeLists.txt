@@ -3,8 +3,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(vhdlang)
 
-# file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
-add_executable(lexer ${SOURCES} tools/lexer.cpp)
-target_compile_options(lexer PUBLIC "-Wall")
-target_include_directories(lexer PUBLIC include)
+add_executable(vhdlang-lexer ${SOURCES} tools/vhdlang-lexer.cpp)
+target_compile_options(vhdlang-lexer PUBLIC "-Wall")
+target_compile_options(vhdlang-lexer PUBLIC "-g")
+target_include_directories(vhdlang-lexer PUBLIC include)

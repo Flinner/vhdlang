@@ -7,3 +7,4 @@ project(vhdlang)
 
 add_executable(lexer ${SOURCES} tools/lexer.cpp)
 target_compile_options(lexer PUBLIC "-Wall")
+target_include_directories(lexer PUBLIC include)

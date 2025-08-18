@@ -8,14 +8,18 @@ private:
     std::string value;
     const Terminal& id;
     int column;
-    int row;
+    int line;
 
 public:
     Token(std::string value, const Terminal& id) : value(value), id(id) {};
-    std::string toString() { return "[Type: " + id.getNameString() + ", value: " + value + "]"; }
-    int getRow() { return row; }
+    std::string toString() {
+        return "[Type: " + id.getNameString() + ", pos: " + std::to_string(line) + ", " +
+               std::to_string(column) + "] " + value;
+    }
+    Terminal getId() { return id; }
+    int getLine() { return line; }
     int getColumn() { return column; }
-    void setRow(int newRow) { row = newRow; }
+    void setLine(int newLine) { line = newLine; }
     void setColumn(int newColumn) { column = newColumn; }
 };
 

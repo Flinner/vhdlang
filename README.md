@@ -13,3 +13,11 @@ List to be updated and improved once there is a proper skeleton
 
 After these steps are implemented, the next goal would be to add more features
 and have the option to choose a standard
+
+
+## Build Commands
+
+```bash
+ cmake -GNinja -DENABLE_DOCS=ON -B build
+ ninja -C build
+```

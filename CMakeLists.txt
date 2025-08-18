@@ -15,3 +15,22 @@ target_compile_options(vhdlang-lexer PUBLIC "-Wall")
 # target_compile_options(vhdlang-lexer PUBLIC "-g")
 target_compile_options(vhdlang-lexer PUBLIC "-gdwarf-4") # For clang
 target_include_directories(vhdlang-lexer PUBLIC include)
+
+
+# --- Optional Doxygen ---
+option(ENABLE_DOCS "Build Doxygen documentation" OFF)
+
+if(ENABLE_DOCS)
+    find_package(Doxygen REQUIRED)
+
+    if(DOXYGEN_FOUND)
+        add_custom_target(doc
+            COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM
+        )
+    else()
+        message(WARNING "Doxygen not found, documentation target will not be available")
+    endif()
+endif()

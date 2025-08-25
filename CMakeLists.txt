@@ -16,6 +16,12 @@ target_compile_options(vhdlang-lexer PUBLIC "-Wall")
 target_compile_options(vhdlang-lexer PUBLIC "-gdwarf-4") # For clang
 target_include_directories(vhdlang-lexer PUBLIC include)
 
+# Test files
+add_executable(lexer-test ${SOURCES} test/lexer/loop-lexer.cpp)
+target_compile_options(lexer-test PUBLIC "-Wall")
+target_compile_options(lexer-test PUBLIC "-gdwarf-4") # For clang
+target_include_directories(lexer-test PUBLIC include)
+
 
 # --- Optional Doxygen ---
 option(ENABLE_DOCS "Build Doxygen documentation" OFF)

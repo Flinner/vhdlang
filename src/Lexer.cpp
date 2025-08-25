@@ -69,7 +69,7 @@ const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::BIT_STRING_HEX, "BIT_STRING_HEX", "X\"[_[:xdigit:]]\""),
     Terminal(TerminalName::REAL_NUMBER, "REAL_NUMBER", "\\d+\\.\\d+"), // TODO add exponent support
     Terminal(TerminalName::CHARACTER_LITERAL, "CHARACTER_LITERAL", "'.'"),
-    Terminal(TerminalName::STRING_LITERAL, "STRING_LITERAL", "\"[^\\n\"]*\""),
+    Terminal(TerminalName::STRING_LITERAL, "STRING_LITERAL", "\"[^\\n\"]*\"(\"[^\\n\"]*\")*"),
     Terminal(TerminalName::COMMENT, "Comment", "--[^\\n]*"),
     Terminal(TerminalName::DOT, "DOT", "\\."),
     Terminal(TerminalName::COMMA, "COMMA", ","),

@@ -10,13 +10,13 @@ namespace vhdlang {
 class Lexer {
 private:
     static const std::vector<Terminal> vhdlTerminals;
-    std::fstream& sourceFile;
+    std::fstream* sourceFile;
     std::string fileContents;
     std::deque<Token> tokens;
 
 public:
-    // Terminal list to use for lexing
-    Lexer(std::fstream& sourceFile);
+    Lexer(std::fstream* sourceFile);
+    Lexer(std::string inputText);
 
     // Fills the tokens vector with tokens from the file list
     int lexFile();

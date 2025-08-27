@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
         std::cout << "Unable to open " << filename << std::endl;
         return 1;
     }
-    Lexer testLexer(file);
+    Lexer testLexer(&file);
     testLexer.lexFile();
     testLexer.printTokens();
     return 0;

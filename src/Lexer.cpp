@@ -4,7 +4,9 @@
 
 using namespace vhdlang;
 
-Lexer::Lexer(std::fstream& sourceFile) : sourceFile(sourceFile) {
+Lexer::Lexer(std::fstream* sourceFile) : sourceFile(sourceFile) {
+}
+Lexer::Lexer(std::string inputText) : sourceFile(NULL), fileContents(inputText) {
 }
 
 void Lexer::printTokens() {
@@ -20,8 +22,10 @@ int Lexer::lexFile() {
     std::smatch tokenResults;
 
     // Read file and put a pointer to track end of regex matches
-    std::string fileContents((std::istreambuf_iterator<char>(sourceFile)),
-                             std::istreambuf_iterator<char>());
+    if (sourceFile != NULL) {
+        fileContents = std::string((std::istreambuf_iterator<char>(*sourceFile)),
+                                 std::istreambuf_iterator<char>());
+    }
     std::string currentPosition = fileContents;
 
     while (!currentPosition.empty()) {

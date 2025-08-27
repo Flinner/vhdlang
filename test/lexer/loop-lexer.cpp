@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
             std::cerr << "Unable to open " << filename << std::endl;
             return 1;
         }
-        Lexer testLexer(file);
+        Lexer testLexer(&file);
         int result = testLexer.lexFile();
         if (result != 0) {
             std::cerr << "Error in " << filename << std::endl;

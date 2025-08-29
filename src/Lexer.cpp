@@ -4,7 +4,9 @@
 
 using namespace vhdlang;
 
-Lexer::Lexer(std::fstream& sourceFile) : sourceFile(sourceFile) {
+Lexer::Lexer(std::fstream* sourceFile) : sourceFile(sourceFile) {
+}
+Lexer::Lexer(std::string inputText) : sourceFile(NULL), fileContents(inputText) {
 }
 
 void Lexer::printTokens() {
@@ -20,8 +22,10 @@ int Lexer::lexFile() {
     std::smatch tokenResults;
 
     // Read file and put a pointer to track end of regex matches
-    std::string fileContents((std::istreambuf_iterator<char>(sourceFile)),
-                             std::istreambuf_iterator<char>());
+    if (sourceFile != NULL) {
+        fileContents = std::string((std::istreambuf_iterator<char>(*sourceFile)),
+                                 std::istreambuf_iterator<char>());
+    }
     std::string currentPosition = fileContents;
 
     while (!currentPosition.empty()) {
@@ -53,7 +57,8 @@ int Lexer::lexFile() {
             }
         }
         if (!matched) {
-            std::cout << "Unrecognized symbol at " << line << ", " << column << std::endl;
+            std::cerr << "Unrecognized symbol at " << line << ", " << column << std::endl;
+            std::cerr << currentPosition.substr(0, currentPosition.find('\n')) << std::endl;
             return 1;
         }
     }
@@ -62,8 +67,16 @@ int Lexer::lexFile() {
 
 const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::WHITESPACE, "Whitespace", "[ \\t]+"),
-    Terminal(TerminalName::NEWLINE, "NEWLINE", "\\n+"),
+    Terminal(TerminalName::NEWLINE, "NEWLINE", "[\\n\\r]+"),
+    Terminal(TerminalName::BIT_STRING_BINARY, "BIT_STRING_BINARY", "B\"[01_]+\""),
+    Terminal(TerminalName::BIT_STRING_OCTAL, "BIT_STRING_OCTAL", "O\"[0-7_]+\""),
+    Terminal(TerminalName::BIT_STRING_HEX, "BIT_STRING_HEX", "X\"[_[:xdigit:]]\""),
+    Terminal(TerminalName::REAL_NUMBER, "REAL_NUMBER", "\\d+\\.\\d+"), // TODO add exponent support
+    Terminal(TerminalName::CHARACTER_LITERAL, "CHARACTER_LITERAL", "'.'"),
+    Terminal(TerminalName::STRING_LITERAL, "STRING_LITERAL", "\"[^\\n\"]*\"(\"[^\\n\"]*\")*"),
+    Terminal(TerminalName::COMMENT, "Comment", "--[^\\n]*"),
     Terminal(TerminalName::DOT, "DOT", "\\."),
+    Terminal(TerminalName::COMMA, "COMMA", ","),
     Terminal(TerminalName::SEMICOLON, "SEMICOLON", ";"),
     Terminal(TerminalName::COLON, "COLON", ":"),
     Terminal(TerminalName::PLUS, "PLUS", "\\+"),
@@ -73,19 +86,23 @@ const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::EQUALS, "EQUALS", "="),
     Terminal(TerminalName::EXCLAMATION, "EXCLAMATION", "!"),
     Terminal(TerminalName::QUESTION, "QUESTION", "\\?"),
-    Terminal(TerminalName::OPEN_PARENTHESIS, "OPEN_PARENTHESIS", "\\("),
-    Terminal(TerminalName::CLOSE_PARENTHESIS, "CLOSE_PARENTHESIS", "\\)"),
-    Terminal(TerminalName::OPEN_BRACKET, "OPEN_BRACKET", "\\["),
-    Terminal(TerminalName::CLOSE_BRACKET, "CLOSE_BRACKET", "\\]"),
-    Terminal(TerminalName::OPEN_CURLY, "OPEN_CURLY", "\\{"),
-    Terminal(TerminalName::CLOSE_CURLY, "CLOSE_CURLY", "\\}"),
+    Terminal(TerminalName::LEFT_PARENTHESIS, "LEFT_PARENTHESIS", "\\("),
+    Terminal(TerminalName::RIGHT_PARENTHESIS, "RIGHT_PARENTHESIS", "\\)"),
+    Terminal(TerminalName::LEFT_BRACKET, "LEFT_BRACKET", "\\["),
+    Terminal(TerminalName::RIGHT_BRACKET, "RIGHT_BRACKET", "\\]"),
+    Terminal(TerminalName::LEFT_CURLY, "LEFT_CURLY", "\\{"),
+    Terminal(TerminalName::RIGHT_CURLY, "RIGHT_CURLY", "\\}"),
     Terminal(TerminalName::GREATER_THAN, "GREATER_THAN", ">"),
     Terminal(TerminalName::LESS_THAN, "LESS_THAN", "<"),
     Terminal(TerminalName::SINGLE_QUOTE, "SINGLE_QUOTE", "'"),
     Terminal(TerminalName::DOUBLE_QUOTE, "DOUBLE_QUOTE", "\""),
     Terminal(TerminalName::BACKSLASH, "BACKSLASH", "\\\\"),
-    Terminal(TerminalName::COMMENT, "Comment", "--[^\\n]+"),
     Terminal(TerminalName::INTEGER, "Integer", "\\d+"),
+    Terminal(TerminalName::AMPERSAND, "AMPERSAND", "&"),
+    Terminal(TerminalName::SLASH, "SLASH", "/"),
+    Terminal(TerminalName::TILDE, "TILDE", "~"),
+    Terminal(TerminalName::BACKTICK, "BACKTICK", "`"),
+    Terminal(TerminalName::VERTICAL_BAR, "VERTICAL_BAR", "\\|"),
     Terminal(TerminalName::RES_ABS, "ABS", "\\bABS\\b"),
     Terminal(TerminalName::RES_ACCESS, "ACCESS", "\\bACCESS\\b"),
     Terminal(TerminalName::RES_AFTER, "AFTER", "\\bAFTER\\b"),
@@ -183,4 +200,6 @@ const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::RES_WITH, "WITH", "\\bWITH\\b"),
     Terminal(TerminalName::RES_XNOR, "XNOR", "\\bXNOR\\b"),
     Terminal(TerminalName::RES_XOR, "XOR", "\\bXOR\\b"),
+    Terminal(TerminalName::BASIC_IDENTIFIER, "BASIC_IDENTIFIER", "[a-zA-Z](_\\w|\\w)*"),
+    Terminal(TerminalName::EXTENDED_IDENTIFIER, "EXTENDED_IDENTIFIER", "\\\\[^\\\\\\n]+\\\\"),
     Terminal(TerminalName::IDENTIFIER, "Identifier", "\\w+")};

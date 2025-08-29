@@ -1,6 +1,7 @@
+#include "vhdlang/Lexer.hpp"
+
 #include <iostream>
 #include <regex>
-#include <vhdlang/Lexer.hpp>
 
 using namespace vhdlang;
 
@@ -24,7 +25,7 @@ int Lexer::lexFile() {
     // Read file and put a pointer to track end of regex matches
     if (sourceFile != NULL) {
         fileContents = std::string((std::istreambuf_iterator<char>(*sourceFile)),
-                                 std::istreambuf_iterator<char>());
+                                   std::istreambuf_iterator<char>());
     }
     std::string currentPosition = fileContents;
 

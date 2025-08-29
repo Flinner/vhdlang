@@ -1,12 +1,10 @@
-#include <iostream>
+#include "vhdlang/Lexer.hpp"
 #include <fstream>
-#include <vhdlang/Lexer.hpp>
-#include <vhdlang/Terminal.hpp>
-#include <vhdlang/Token.hpp>
+#include <iostream>
 
 using namespace vhdlang;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
     // Current test
     std::string filename = argv[1];

@@ -1,9 +1,9 @@
 #pragma once
-#include <fstream>
+#include "vhdlang/Terminal.hpp"
+#include "vhdlang/Token.hpp"
 #include <deque>
+#include <fstream>
 #include <string>
-#include <vhdlang/Terminal.hpp>
-#include <vhdlang/Token.hpp>
 
 namespace vhdlang {
 

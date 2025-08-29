@@ -1,6 +1,6 @@
 #pragma once
+#include "vhdlang/Terminal.hpp"
 #include <string>
-#include <vhdlang/Terminal.hpp>
 
 namespace vhdlang {
 class Token {

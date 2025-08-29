@@ -1,8 +1,6 @@
+#include "vhdlang/Lexer.hpp"
 #include <fstream>
 #include <iostream>
-#include <vhdlang/Lexer.hpp>
-#include <vhdlang/Terminal.hpp>
-#include <vhdlang/Token.hpp>
 
 using namespace vhdlang;
 
@@ -22,7 +20,8 @@ int main(int argc, char** argv) {
         int result = testLexer.lexFile();
         if (result != 0) {
             std::cerr << "Error in " << filename << std::endl;
-        } else {
+        }
+        else {
             std::cout << "Success for " << filename << std::endl;
         }
         // testLexer.printTokens();

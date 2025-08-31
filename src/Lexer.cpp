@@ -12,7 +12,7 @@ Lexer::Lexer(std::string inputText) : sourceFile(NULL), fileContents(inputText) 
 
 void Lexer::printTokens() {
     for (auto token : tokens) {
-        std::cout << token.toString() << " ";
+        std::cout << token << " ";
     }
     std::cout << std::endl;
 }

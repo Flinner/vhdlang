@@ -1,4 +1,4 @@
-/// @file Ast.hpp
+/// @file ASTNode.hpp
 /// @brief VHDL-{93,2002,2008,2019} AST hierarchy for hand-rolled parser.
 /// @details
 /// This file defines all AST nodes for declarations, statements, expressions,
@@ -43,21 +43,17 @@
 
 #pragma once
 
-/// \TODO: Remove from this file.
-class SourceRange {
-    /// @TODO: use the lexer's end_{line,column}
-    int begLine{}, begCol{}; //, endLine{}, endCol{};
-};
-
 ///===----------------------------------------------------------------------===//
 /// @brief Base class for all AST nodes.
 ///===----------------------------------------------------------------------===//
 class ASTNode {
 private:
-    SourceRange loc;
+    int line, column;
 
 protected:
     virtual ~ASTNode() = default;
+    int getLine() { return line; }
+    int getColumn() { return column; }
 };
 
 ///===----------------------------------------------------------------------===//

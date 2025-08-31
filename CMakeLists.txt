@@ -1,11 +1,21 @@
 cmake_minimum_required(VERSION 3.10)
 
+project(vhdlang)
+
 set(CMAKE_C_COMPILER "clang")
 set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project(vhdlang)
+find_package(LLVM REQUIRED CONFIG)
+
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+# include_directories(${LLVM_INCLUDE_DIRS})
+separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
+add_definitions(${LLVM_DEFINITIONS_LIST})
+llvm_map_components_to_libnames(support)
 
 # file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 set(SOURCES src/Lexer.cpp)
@@ -14,7 +24,10 @@ add_executable(vhdlang-lexer ${SOURCES} tools/vhdlang-lexer.cpp)
 target_compile_options(vhdlang-lexer PUBLIC "-Wall")
 # target_compile_options(vhdlang-lexer PUBLIC "-g")
 target_compile_options(vhdlang-lexer PUBLIC "-gdwarf-4") # For clang
-target_include_directories(vhdlang-lexer PUBLIC include)
+target_include_directories(vhdlang-lexer PUBLIC include ${LLVM_INCLUDE_DIRS})
+
+# Link against LLVM libraries
+target_link_libraries(vhdlang-lexer ${llvm_libs})
 
 # Test files
 add_executable(lexer-test ${SOURCES} test/lexer/loop-lexer.cpp)

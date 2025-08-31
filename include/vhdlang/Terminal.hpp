@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <regex>
 #include <string>
 
@@ -160,6 +161,10 @@ public:
     const std::regex& getRegex() const { return terminalRegex; }
 };
 
+inline std::ostream& operator<<(std::ostream& os, const Terminal& terminal) {
+    os << terminal.getNameString();
+    return os;
+}
 // Huge list of terminals, order matter, lower index => matches first
 extern const std::vector<Terminal> vhdlTerminals;
 } // namespace vhdlang

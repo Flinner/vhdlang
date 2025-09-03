@@ -18,6 +18,13 @@ public:
     Lexer(std::fstream* sourceFile);
     Lexer(std::string inputText);
 
+    bool empty() { return tokens.empty(); }
+    // Peak while ignoring whitespace tokens
+    const Token peak();
+
+    // Pop while ignoring whitespace tokens
+    Token pop();
+
     // Fills the tokens vector with tokens from the file list
     int lexFile();
 

@@ -7,7 +7,8 @@ using namespace vhdlang;
 
 Lexer::Lexer(std::fstream* sourceFile) : sourceFile(sourceFile) {
 }
-Lexer::Lexer(std::string inputText) : sourceFile(NULL), fileContents(inputText) {
+Lexer::Lexer(std::string inputText) :
+    sourceFile(NULL), fileContents(inputText) {
 }
 
 void Lexer::printTokens() {
@@ -24,19 +25,22 @@ int Lexer::lexFile() {
 
     // Read file and put a pointer to track end of regex matches
     if (sourceFile != NULL) {
-        fileContents = std::string((std::istreambuf_iterator<char>(*sourceFile)),
-                                   std::istreambuf_iterator<char>());
+        fileContents =
+            std::string((std::istreambuf_iterator<char>(*sourceFile)),
+                        std::istreambuf_iterator<char>());
     }
     std::string currentPosition = fileContents;
 
     while (!currentPosition.empty()) {
         bool matched = false;
         for (auto& potentialTerminal : vhdlTerminals) {
-            if (std::regex_search(currentPosition, tokenResults, potentialTerminal.getRegex(),
+            if (std::regex_search(currentPosition, tokenResults,
+                                  potentialTerminal.getRegex(),
                                   std::regex_constants::match_continuous)) {
                 matched = true;
                 // std::cout << "Matched: " << tokenResults[0] << std::endl;
-                // std::cout << "Suffix: " << tokenResults.suffix() << std::endl;
+                // std::cout << "Suffix: " << tokenResults.suffix() <<
+                // std::endl;
 
                 // Create Token
                 Token newToken(tokenResults[0], potentialTerminal);
@@ -58,14 +62,47 @@ int Lexer::lexFile() {
             }
         }
         if (!matched) {
-            std::cerr << "Unrecognized symbol at " << line << ", " << column << std::endl;
-            std::cerr << currentPosition.substr(0, currentPosition.find('\n')) << std::endl;
+            std::cerr << "Unrecognized symbol at " << line << ", " << column
+                      << std::endl;
+            std::cerr << currentPosition.substr(0, currentPosition.find('\n'))
+                      << std::endl;
             return 1;
         }
     }
     return 0;
 }
 
+const Token Lexer::peak() {
+    for (auto it = tokens.cbegin(); it != tokens.cend(); it++) {
+        TerminalName currentName = it->getName();
+        if (currentName != TerminalName::WHITESPACE &&
+            currentName != TerminalName::COMMENT &&
+            currentName != TerminalName::NEWLINE) {
+            return *it;
+        }
+    }
+
+    // Empty so we return eof
+    return vhdlang::eofToken;
+}
+
+Token Lexer::pop() {
+    while (!tokens.empty()) {
+        Token token = tokens.front();
+        TerminalName currentName = token.getName();
+        tokens.pop_front();
+        if (currentName != TerminalName::WHITESPACE &&
+            currentName != TerminalName::COMMENT &&
+            currentName != TerminalName::NEWLINE) {
+            return token;
+        }
+    }
+
+    // Empty so we return eof
+    return vhdlang::eofToken;
+}
+
+// clang-format off
 const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::WHITESPACE, "Whitespace", "[ \\t]+"),
     Terminal(TerminalName::NEWLINE, "NEWLINE", "[\\n\\r]+"),
@@ -204,3 +241,4 @@ const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::BASIC_IDENTIFIER, "BASIC_IDENTIFIER", "[a-zA-Z](_\\w|\\w)*"),
     Terminal(TerminalName::EXTENDED_IDENTIFIER, "EXTENDED_IDENTIFIER", "\\\\[^\\\\\\n]+\\\\"),
     Terminal(TerminalName::IDENTIFIER, "Identifier", "\\w+")};
+// clang-format on

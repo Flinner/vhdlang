@@ -143,7 +143,8 @@ enum class TerminalName {
     RES_WITH,
     RES_XNOR,
     RES_XOR,
-    IDENTIFIER
+    IDENTIFIER,
+    EOF_VHDL
 };
 
 class Terminal {
@@ -153,13 +154,16 @@ private:
     const std::regex terminalRegex;
 
 public:
-    Terminal(TerminalName name, const std::string& nameString, const std::string& regexText) :
+    Terminal(TerminalName name, const std::string& nameString,
+             const std::string& regexText) :
         name(name), nameString(nameString),
         terminalRegex(std::regex(regexText, std::regex::icase)) {};
     const TerminalName& getName() const { return name; }
     const std::string& getNameString() const { return nameString; }
     const std::regex& getRegex() const { return terminalRegex; }
 };
+
+const Terminal eofTerminal = Terminal(TerminalName::EOF_VHDL, "EOF", "");
 
 inline std::ostream& operator<<(std::ostream& os, const Terminal& terminal) {
     os << terminal.getNameString();

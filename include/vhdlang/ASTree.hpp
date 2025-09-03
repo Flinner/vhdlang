@@ -13,11 +13,15 @@ private:
     const GrammarRule rule;
 
 public:
+    ASTree();
     ASTree(ASTree* parent, GrammarRule rule) : parent(parent), rule(rule) {}
+
     void addChild(std::unique_ptr<ASTree> child) { children.push_back(std::move(child)); }
     const ASTree* getParent() { return parent; }
     const GrammarRule getRule() { return rule; }
-    void setNode(std::unique_ptr<ASTNode> node) { this->node = std::move(node); }
+    void setNode(std::unique_ptr<ASTNode> node) {
+        this->node = std::move(node);
+    }
     const ASTNode& getNode() { return *node; }
 };
 } // namespace vhdlang

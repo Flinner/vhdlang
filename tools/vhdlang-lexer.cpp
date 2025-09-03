@@ -16,5 +16,9 @@ int main(int argc, char** argv) {
     Lexer testLexer(&file);
     testLexer.lexFile();
     testLexer.printTokens();
+    while(!testLexer.empty()) {
+        std::cout << testLexer.pop();
+    }
+    std::cout << std::endl;
     return 0;
 }

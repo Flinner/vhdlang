@@ -18,7 +18,7 @@ add_definitions(${LLVM_DEFINITIONS_LIST})
 llvm_map_components_to_libnames(support)
 
 # file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
-set(SOURCES src/Lexer.cpp)
+set(SOURCES src/Lexer.cpp src/Parser.cpp)
 
 add_executable(vhdlang-lexer ${SOURCES} tools/vhdlang-lexer.cpp)
 target_compile_options(vhdlang-lexer PUBLIC "-Wall")

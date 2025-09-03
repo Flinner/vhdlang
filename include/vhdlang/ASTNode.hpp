@@ -51,7 +51,7 @@ private:
     int line, column;
 
 protected:
-    virtual ~ASTNode() = default;
+    // virtual ~ASTNode() = default;
     int getLine() { return line; }
     int getColumn() { return column; }
 };

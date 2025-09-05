@@ -86,3 +86,130 @@ int Parser::parseContextItem(ASTree* parent) {
     }
     return result;
 }
+
+int Parser::parsePrimaryUnit(ASTree* parent) {
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::PRIMARY_UNIT));
+    int result = parseEntityDeclaration(tree.get());
+
+    if (result == PARSE_NOMATCH) {
+        result = parseConfigurationDeclaration(tree.get());
+    }
+
+    if (result == PARSE_NOMATCH) {
+        result = parsePackageDeclaration(tree.get());
+    }
+
+    if (result == PARSE_NOMATCH) {
+        result = parsePackageInstantiationDeclaration(tree.get());
+    }
+
+    if (result == PARSE_NOMATCH) {
+        result = parseContextDeclaration(tree.get());
+    }
+
+    if (result == 0) {
+        parent->addChild(std::move(tree));
+    }
+
+    return result;
+}
+
+int Parser::parseSecondaryUnit(ASTree* parent) {
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::SECONDARY_UNIT));
+    int result = parseArchitectureBody(tree.get());
+
+    if (result == PARSE_NOMATCH) {
+        result = parsePackageBody(tree.get());
+    }
+
+    if (result == 0) {
+        parent->addChild(std::move(tree));
+    }
+
+    return result;
+}
+
+int Parser::parseLibraryClause(ASTree* parent) {
+    Token tok = lexer.peak();
+    if (tok.getName() != TerminalName::RES_LIBRARY) {
+        return PARSE_NOMATCH;
+    }
+
+    lexer.pop(); // library
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::LIBRARY_CLAUSE));
+    int result = parseLogicalNameList(tree.get());
+
+    if (result != 0) {
+        return PARSE_ERROR;
+    }
+
+    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+        cerr << "Missing ; after library" << endl;
+        return PARSE_ERROR;
+    }
+    lexer.pop(); // semicolon
+    parent->addChild(std::move(tree));
+    return 0;
+}
+
+int Parser::parseUseClause(ASTree* parent) {
+    Token tok = lexer.peak();
+    if (tok.getName() != TerminalName::RES_USE) {
+        return PARSE_NOMATCH;
+    }
+
+    lexer.pop();
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::USE_CLAUSE));
+    int result = parseSelectedName(tree.get());
+
+    if (result != 0) {
+        return PARSE_ERROR;
+    }
+
+    while (lexer.peak().getName() == TerminalName::COMMA) {
+        lexer.pop(); // comma
+        result = parseSelectedName(tree.get());
+        if (result != 0) {
+            return PARSE_ERROR;
+        }
+    }
+
+    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+        cerr << "Missing ; after use clause" << endl;
+        return PARSE_ERROR;
+    }
+    lexer.pop(); // semicolon
+    parent->addChild(std::move(tree));
+    return 0;
+}
+
+int Parser::parseContextReference(ASTree* parent) {
+    Token tok = lexer.peak();
+    if (tok.getName() != TerminalName::RES_CONTEXT) {
+        return PARSE_NOMATCH;
+    }
+
+    lexer.pop();
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::CONTEXT_REFERENCE));
+    int result = parseSelectedName(tree.get());
+
+    if (result != 0) {
+        return PARSE_ERROR;
+    }
+
+    while (lexer.peak().getName() == TerminalName::COMMA) {
+        lexer.pop(); // comma
+        result = parseSelectedName(tree.get());
+        if (result != 0) {
+            return PARSE_ERROR;
+        }
+    }
+
+    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+        cerr << "Missing ; after use clause" << endl;
+        return PARSE_ERROR;
+    }
+    lexer.pop(); // semicolon
+    parent->addChild(std::move(tree));
+    return 0;
+}

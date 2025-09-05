@@ -23,6 +23,15 @@ private:
     int parseLibraryClause(ASTree* parent);
     int parseUseClause(ASTree* parent);
     int parseContextReference(ASTree* parent);
+    int parseEntityDeclaration(ASTree* parent);
+    int parseConfigurationDeclaration(ASTree* parent);
+    int parsePackageDeclaration(ASTree* parent);
+    int parsePackageInstantiationDeclaration(ASTree* parent);
+    int parseContextDeclaration(ASTree* parent);
+    int parseArchitectureBody(ASTree* parent);
+    int parsePackageBody(ASTree* parent);
+    int parseLogicalNameList(ASTree* parent);
+    int parseSelectedName(ASTree* parent);
 
 public:
     Parser(vhdlang::Lexer& lexer) : lexer(lexer) {}

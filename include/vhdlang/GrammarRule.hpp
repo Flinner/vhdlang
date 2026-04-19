@@ -20,5 +20,9 @@ enum class GrammarRule {
     ARCHITECTURE_BODY,
     PACKAGE_BODY,
     LOGICAL_NAME_LIST,
+    SELECTED_NAME,
+    IDENTIFIER,
+    ENTITY_HEADER,
+    ENTITY_DECLARATIVE_PART
 };
 } // namespace vhdlang

@@ -71,7 +71,6 @@ private:
     int parsePackageBody(ASTree* parent);
     int parseLogicalNameList(ASTree* parent);
     int parseSelectedName(ASTree* parent);
-
     int parseIdentifier(ASTree* parent);
     int parseEntityHeader(ASTree* parent);
     int parseEntityDeclarativePart(ASTree* parent);
@@ -87,6 +86,11 @@ private:
     int parseArchitectureStatementPart(ASTree* parent);
     int parsePackageBodyDeclarativePart(ASTree* parent);
     int parseLogicalName(ASTree* parent);
+    int parseSuffix(ASTree* parent);
+
+    int parseGenericClause(ASTree* parent);
+    int parsePortClause(ASTree* parent);
+    int parseEntityDeclarativeItem(ASTree* parent);
 
 public:
     Parser(vhdlang::Lexer& lexer) : lexer(lexer) {}

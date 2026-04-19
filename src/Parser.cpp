@@ -1,6 +1,9 @@
 #include "vhdlang/Parser.hpp"
 
 #include "vhdlang/GrammarRule.hpp"
+#include "vhdlang/NodeIdentifier.hpp"
+#include "vhdlang/Terminal.hpp"
+#include <memory>
 
 // Different return values to indicate if we took the wrong option or actual
 // error
@@ -658,4 +661,107 @@ int Parser::parseLogicalNameList(ASTree* parent) {
 }
 
 int Parser::parseSelectedName(ASTree* parent) {
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::SELECTED_NAME));
+    int result = parseIdentifier(tree.get());
+
+    if (result != 0) {
+        return result;
+    }
+
+    while (lexer.peak().getName() == TerminalName::DOT) {
+        lexer.pop(); // dot
+        result = parseSuffix(tree.get());
+        if (result != 0) {
+            cerr << "Missing suffix after ." << endl;
+            return PARSE_ERROR;
+        }
+    }
+    parent->addChild(std::move(tree));
+    return 0;
+}
+
+int Parser::parseIdentifier(ASTree* parent) {
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::IDENTIFIER));
+    TerminalName tok = lexer.peak().getName();
+    if (tok == TerminalName::BASIC_IDENTIFIER ||
+        tok == TerminalName::EXTENDED_IDENTIFIER) {
+        Token id = lexer.pop();
+        unique_ptr<ASTNode> newIdentifier(new NodeIdentifier(id.getValue()));
+        tree->setNode(std::move(newIdentifier));
+        parent->addChild(std::move(tree));
+        return 0;
+    }
+    return PARSE_NOMATCH;
+}
+
+int Parser::parseEntityHeader(ASTree* parent) {
+    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::ENTITY_HEADER));
+    int result = parseGenericClause(tree.get());
+    if (result == PARSE_ERROR) {
+        return result;
+    }
+
+    result = parsePortClause(tree.get());
+    if (result == PARSE_ERROR) {
+        return result;
+    }
+
+    parent->addChild(std::move(tree));
+
+    return 0;
+}
+
+int Parser::parseEntityDeclarativePart(ASTree* parent) {
+    unique_ptr<ASTree> tree(
+        new ASTree(parent, GrammarRule::ENTITY_DECLARATIVE_PART));
+    int result = parseEntityDeclarativeItem(tree.get());
+    bool match = false; // Matched at least once
+    while (result == 0) {
+        result = parseContextItem(tree.get());
+        match = true;
+    }
+    if (result == PARSE_NOMATCH && match) {
+        parent->addChild(std::move(tree));
+        return 0;
+    }
+    return result;
+}
+
+int Parser::parseEntityStatementPart(ASTree* parent) {
+}
+
+int Parser::parseSimpleName(ASTree* parent) {
+}
+
+int Parser::parseName(ASTree* parent) {
+}
+
+int Parser::parseConfigurationDeclarativePart(ASTree* parent) {
+}
+
+int Parser::parseBlockConfiguration(ASTree* parent) {
+}
+
+int Parser::parsePackageHeader(ASTree* parent) {
+}
+
+int Parser::parsePackageDeclarativePart(ASTree* parent) {
+}
+
+int Parser::parseGenericMapAspect(ASTree* parent) {
+}
+
+int Parser::parseArchitectureDeclarativePart(ASTree* parent) {
+}
+
+int Parser::parseArchitectureStatementPart(ASTree* parent) {
+}
+
+int Parser::parsePackageBodyDeclarativePart(ASTree* parent) {
+}
+
+int Parser::parseLogicalName(ASTree* parent) {
+}
+
+int Parser::parseSuffix(ASTree* parent) {
 }

@@ -83,7 +83,7 @@ const Token Lexer::peak() {
     }
 
     // Empty so we return eof
-    return vhdlang::eofToken;
+    return eofToken;
 }
 
 Token Lexer::pop() {
@@ -99,7 +99,7 @@ Token Lexer::pop() {
     }
 
     // Empty so we return eof
-    return vhdlang::eofToken;
+    return eofToken;
 }
 
 // clang-format off

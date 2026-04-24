@@ -75,11 +75,9 @@ private:
     int parseEntityHeader(ASTree* parent);
     int parseEntityDeclarativePart(ASTree* parent);
     int parseEntityStatementPart(ASTree* parent);
-    int parseSimpleName(ASTree* parent);
     int parseName(ASTree* parent);
     int parseConfigurationDeclarativePart(ASTree* parent);
     int parseBlockConfiguration(ASTree* parent);
-    int parsePackageHeader(ASTree* parent);
     int parsePackageDeclarativePart(ASTree* parent);
     int parseGenericMapAspect(ASTree* parent);
     int parseArchitectureDeclarativePart(ASTree* parent);
@@ -91,6 +89,18 @@ private:
     int parseGenericClause(ASTree* parent);
     int parsePortClause(ASTree* parent);
     int parseEntityDeclarativeItem(ASTree* parent);
+    int parseEntityStatement(ASTree* parent);
+    int parseNamePart(ASTree* parent);
+    int parseConfigurationDeclarativeItem(ASTree* parent);
+    int parseBlockSpecification(ASTree* parent);
+    int parseConfigurationItem(ASTree* parent);
+    int parsePackageDeclarativeItem(ASTree* parent);
+    int parseAssociationList(ASTree* parent);
+    int parseBlockDeclarativeItem(ASTree* parent);
+    int parseArchitectureStatement(ASTree* parent);
+    int parseBodyDeclarativeItem(ASTree* parent);
+
+    int parseBlockStatement(ASTree* parent);
 
 public:
     Parser(vhdlang::Lexer& lexer) : lexer(lexer) {}

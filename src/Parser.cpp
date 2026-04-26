@@ -5,11 +5,6 @@
 #include "vhdlang/Terminal.hpp"
 #include <memory>
 
-// Different return values to indicate if we took the wrong option or actual
-// error
-#define PARSE_NOMATCH 1
-#define PARSE_ERROR 2
-
 using namespace vhdlang;
 using namespace std;
 

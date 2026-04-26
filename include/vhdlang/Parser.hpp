@@ -3,47 +3,14 @@
 #include "vhdlang/Lexer.hpp"
 #include <memory>
 
+// Different return values to indicate if we took the wrong option or actual
+// error
+#define PARSE_NOMATCH 1
+#define PARSE_ERROR 2
+
+
 // Takes as input a lexer and parses it to create an AST.
 // For now the idea is 1 parser per file
-
-// Changes from 2008 grammar
-//
-//   name
-//     : simple_name
-//     | operator_symbol
-//     | selected_name
-//     | indexed_name
-//     | slice_name
-//     | attribute_name
-//     ;
-//     and replace with the antlr vhdl grammar version which is
-//
-// name
-//     : (identifier | STRING_LITERAL) (name_part)*
-//     ;
-//
-// name_part
-//     : selected_name_part
-//     | function_call_or_indexed_name_part
-//     | slice_name_part
-//     | attribute_name_part
-//     ;
-//
-// selected_name
-//     : identifier (DOT suffix)*
-//     ;
-//
-// selected_name_part
-//     : (DOT suffix)+
-//     ;
-//
-// function_call_or_indexed_name_part
-//     : LPAREN actual_parameter_part RPAREN
-//     ;
-//
-// slice_name_part
-//     : LPAREN discrete_range RPAREN
-//     ;
 
 namespace vhdlang {
 class Parser {

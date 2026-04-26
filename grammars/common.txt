@@ -1,0 +1,117 @@
+subprogram_declaration
+    : subprogram_specification SEMI
+    ;
+
+subprogram_body
+    : subprogram_specification IS subprogram_declarative_part BEGIN subprogram_statement_part END (
+        subprogram_kind
+    )? (designator)? SEMI
+    ;
+
+subprogram_instantiation_declaration
+    // : subprogram_kind identifier IS NEW name (signature)? (generic_map_aspect) SEMI
+    : subprogram_kind identifier IS NEW name (generic_map_aspect) SEMI
+    ;
+
+package_declaration
+    // : PACKAGE identifier IS package_header package_declarative_part END (PACKAGE)? (simple_name)? SEMI
+    : PACKAGE identifier IS package_header package_declarative_part END (PACKAGE)? (identifier)? SEMI
+    ;
+
+package_body
+    //: PACKAGE BODY identifier IS package_body_declarative_part END (PACKAGE BODY)? (simple_name)? SEMI
+    : PACKAGE BODY identifier IS package_body_declarative_part END (PACKAGE BODY)? (identifier)? SEMI
+    ;
+
+package_instantiation_declaration
+    : PACKAGE identifier IS NEW name (LPAREN generic_map_aspect RPAREN) SEMI
+    ;
+
+type_declaration
+    : full_type_declaration
+    | incomplete_type_declaration
+    ;
+
+subtype_declaration
+    : SUBTYPE identifier IS subtype_indication SEMI
+    ;
+
+constant_declaration
+    : CONSTANT identifier_list COLON subtype_indication (WALRUS expression)? SEMI
+    ;
+
+signal_declaration
+    : SIGNAL identifier_list COLON (subtype_indication) (signal_kind)? (WALRUS expression)? SEMI
+    ;
+
+variable_declaration
+    : (SHARED)? VARIABLE identifier_list COLON subtype_indication (WALRUS expression)? SEMI
+    ;
+
+file_declaration
+    : FILE identifier_list COLON subtype_indication (file_open_information)? SEMI
+    ;
+
+alias_declaration
+    // : ALIAS alias_designator (COLON subtype_indication)? IS name (signature)? SEMI
+    : ALIAS alias_designator (COLON subtype_indication)? IS name SEMI
+    ;
+
+attribute_declaration
+    : ATTRIBUTE label_colon name SEMI
+    ;
+
+attribute_specification
+    : ATTRIBUTE attribute_designator OF entity_specification IS expression SEMI
+    ;
+
+disconnection_specification
+    : DISCONNECT guarded_signal_specification AFTER expression SEMI
+    ;
+
+use_clause
+    : USE selected_name (COMMA selected_name)* SEMI
+    ;
+
+group_template_declaration
+    : GROUP identifier IS LPAREN entity_class_entry_list RPAREN SEMI
+    ;
+
+group_declaration
+    : GROUP label_colon name LPAREN group_constituent_list RPAREN SEMI
+    ;
+
+concurrent_assertion_statement
+    : (label_colon)? (POSTPONED)? assertion SEMI
+    ;
+
+process_statement
+    : (label_colon)? (POSTPONED)? PROCESS (LPAREN process_sensitivity_list RPAREN)? (IS)? process_declarative_part BEGIN process_statement_part END (
+        POSTPONED
+    )? PROCESS (identifier)? SEMI
+    ;
+
+concurrent_procedure_call_statement
+    : (label_colon)? (POSTPONED)? procedure_call SEMI
+    ;
+
+interface_list
+    // : interface_element (SEMI interface_element)*
+    : interface_declaration (SEMI interface_declaration)*
+    ;
+
+identifier_list
+    : identifier (COMMA identifier)*
+    ;
+
+subtype_indication
+    // : (resolution_indication)? type_mark (constraint)?
+    : (resolution_indication)? name (constraint)?
+    ;
+
+expression
+    : (CONDITION_OPERATOR primary)
+    // | logical_expression
+    | (relation (logical_operator relation)*) // Optimised logical_expression
+    ;
+

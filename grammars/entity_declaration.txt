@@ -1,0 +1,68 @@
+entity_declaration
+  : ENTITY identifier IS entity_header
+    entity_declarative_part
+    ( BEGIN entity_statement_part )?
+    END ( ENTITY )? ( identifier )? SEMI
+  ;
+
+entity_header
+  : ( generic_clause )?
+    ( port_clause )?
+  ;
+
+entity_declarative_part
+  : ( entity_declarative_item )*
+  ;
+
+entity_statement_part
+  : ( entity_statement )*
+  ;
+
+generic_clause
+  : GENERIC LPAREN generic_list RPAREN SEMI
+  ;
+
+port_clause
+  : PORT LPAREN port_list RPAREN SEMI
+  ;
+
+entity_declarative_item
+    : subprogram_declaration
+    | subprogram_body
+    | subprogram_instantiation_declaration
+    | package_declaration
+    | package_body
+    | package_instantiation_declaration
+    | type_declaration
+    | subtype_declaration
+    | constant_declaration
+    | signal_declaration
+    | variable_declaration
+    | file_declaration
+    | alias_declaration
+    | attribute_declaration
+    | attribute_specification
+    | disconnection_specification
+    | use_clause
+    | group_template_declaration
+    | group_declaration
+    ;
+
+entity_statement
+  : concurrent_assertion_statement
+  | process_statement
+  | concurrent_procedure_call_statement
+  ;
+
+generic_list
+  : interface_constant_declaration (SEMI interface_constant_declaration)*
+  ;
+
+port_list
+    : interface_list
+    ;
+
+interface_constant_declaration
+    : (CONSTANT)? identifier_list COLON (IN)? subtype_indication (WALRUS expression)?
+    ;
+

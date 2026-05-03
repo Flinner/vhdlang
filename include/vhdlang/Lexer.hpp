@@ -22,6 +22,8 @@ public:
     // Peak while ignoring whitespace tokens
     const Token peak();
 
+    const Token peakN(int n);
+
     // Pop while ignoring whitespace tokens
     Token pop();
 
@@ -30,5 +32,8 @@ public:
 
     // Print stored tokens
     void printTokens();
+
+    // Match the first non-whitespace token
+    bool match(TerminalName name);
 };
 } // namespace vhdlang

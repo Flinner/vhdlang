@@ -86,6 +86,7 @@ const Token Lexer::peak() {
     return eofToken;
 }
 
+// TODO: implement in terms of peakN maybe
 Token Lexer::pop() {
     while (!tokens.empty()) {
         Token token = tokens.front();
@@ -94,6 +95,28 @@ Token Lexer::pop() {
         if (currentName != TerminalName::WHITESPACE &&
             currentName != TerminalName::COMMENT &&
             currentName != TerminalName::NEWLINE) {
+            return token;
+        }
+    }
+
+    // Empty so we return eof
+    return eofToken;
+}
+
+bool Lexer::match(TerminalName name) {
+    return this->peak().getName() == name;
+}
+
+// n = 0 means next token
+const Token Lexer::peakN(int n) {
+    while (!tokens.empty()) {
+        Token token = tokens.front();
+        TerminalName currentName = token.getName();
+        tokens.pop_front();
+        if (currentName != TerminalName::WHITESPACE &&
+            currentName != TerminalName::COMMENT &&
+            currentName != TerminalName::NEWLINE &&
+            n-- > 0) {
             return token;
         }
     }
@@ -121,7 +144,7 @@ const std::vector<Terminal> Lexer::vhdlTerminals = {
     Terminal(TerminalName::MINUS, "MINUS", "-"),
     Terminal(TerminalName::STAR, "STAR", "\\*"),
     Terminal(TerminalName::CARET, "CARET", "\\^"),
-    Terminal(TerminalName::EQUALS, "EQUALS", "="),
+    Terminal(TerminalName::EQUAL, "EQUAL", "="),
     Terminal(TerminalName::EXCLAMATION, "EXCLAMATION", "!"),
     Terminal(TerminalName::QUESTION, "QUESTION", "\\?"),
     Terminal(TerminalName::LEFT_PARENTHESIS, "LEFT_PARENTHESIS", "\\("),

@@ -25,7 +25,7 @@ enum class TerminalName {
     MINUS,
     STAR,
     CARET,
-    EQUALS,
+    EQUAL,
     EXCLAMATION,
     QUESTION,
     LEFT_PARENTHESIS,

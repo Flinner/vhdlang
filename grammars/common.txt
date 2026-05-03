@@ -115,3 +115,55 @@ expression
     | (relation (logical_operator relation)*) // Optimised logical_expression
     ;
 
+generic_clause
+  : GENERIC LPAREN generic_list RPAREN SEMI
+  ;
+
+generic_list
+  : interface_constant_declaration (SEMI interface_constant_declaration)*
+  ;
+
+interface_declaration
+    : interface_object_declaration
+    | interface_type_declaration
+    | interface_subprogram_declaration
+    | interface_package_declaration
+    ;
+
+interface_type_declaration
+    : TYPE identifier
+    ;
+
+interface_object_declaration
+    : interface_constant_declaration
+    | interface_signal_declaration
+    | interface_variable_declaration
+    | interface_file_declaration
+    ;
+
+interface_signal_declaration
+    : (SIGNAL)? identifier_list COLON (mode_rule)? subtype_indication (BUS)? (WALRUS expression)?
+    ;
+
+mode_rule
+    : IN
+    | OUT
+    | INOUT
+    | BUFFER
+    | LINKAGE
+    ;
+
+name
+    : (
+        identifier       // simple_name
+        | STRING_LITERAL // operator_symbol
+        | CHARACTER_LITERAL
+    ) (name_part)*
+    ;
+
+name_part
+    : (DOT suffix)+                                               // selected_name
+    | LPAREN actual_parameter_part RPAREN                         // indexed_name
+    | LPAREN discrete_range RPAREN                                // slice_name
+    | APOSTROPHE attribute_designator (LPAREN expression RPAREN)? // attribute_name
+    ;

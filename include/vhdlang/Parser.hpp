@@ -8,7 +8,6 @@
 #define PARSE_NOMATCH 1
 #define PARSE_ERROR 2
 
-
 // Takes as input a lexer and parses it to create an AST.
 // For now the idea is 1 parser per file
 

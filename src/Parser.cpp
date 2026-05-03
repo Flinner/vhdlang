@@ -142,7 +142,7 @@ int Parser::parseLibraryClause(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after library" << endl;
         return PARSE_ERROR;
     }
@@ -165,7 +165,7 @@ int Parser::parseUseClause(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    while (lexer.peak().getName() == TerminalName::COMMA) {
+    while (lexer.match(TerminalName::COMMA)) {
         lexer.pop(); // comma
         result = parseSelectedName(tree.get());
         if (result != 0) {
@@ -173,7 +173,7 @@ int Parser::parseUseClause(ASTree* parent) {
         }
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after use clause" << endl;
         return PARSE_ERROR;
     }
@@ -196,7 +196,7 @@ int Parser::parseContextReference(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    while (lexer.peak().getName() == TerminalName::COMMA) {
+    while (lexer.match(TerminalName::COMMA)) {
         lexer.pop(); // comma
         result = parseSelectedName(tree.get());
         if (result != 0) {
@@ -204,7 +204,7 @@ int Parser::parseContextReference(ASTree* parent) {
         }
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after use clause" << endl;
         return PARSE_ERROR;
     }
@@ -214,7 +214,7 @@ int Parser::parseContextReference(ASTree* parent) {
 }
 
 int Parser::parseEntityDeclaration(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_ENTITY) {
+    if (!lexer.match(TerminalName::RES_ENTITY)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // entity
@@ -227,7 +227,7 @@ int Parser::parseEntityDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         cerr << "Missing is " << endl;
         return PARSE_ERROR;
     }
@@ -244,7 +244,7 @@ int Parser::parseEntityDeclaration(ASTree* parent) {
     }
 
     // optional part
-    if (lexer.peak().getName() == TerminalName::RES_BEGIN) {
+    if (lexer.match(TerminalName::RES_BEGIN)) {
         lexer.pop(); // begin
         result = parseEntityStatementPart(tree.get());
         if (result != 0) {
@@ -252,14 +252,14 @@ int Parser::parseEntityDeclaration(ASTree* parent) {
         }
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
     // optional
-    if (lexer.peak().getName() == TerminalName::RES_ENTITY) {
+    if (lexer.match(TerminalName::RES_ENTITY)) {
         lexer.pop();
     }
 
@@ -271,7 +271,7 @@ int Parser::parseEntityDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after entity declaration" << endl;
         return PARSE_ERROR;
     }
@@ -283,7 +283,7 @@ int Parser::parseEntityDeclaration(ASTree* parent) {
 
 // TODO: verification binding grammar
 int Parser::parseConfigurationDeclaration(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_CONFIGURATION) {
+    if (!lexer.match(TerminalName::RES_CONFIGURATION)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // entity
@@ -296,7 +296,7 @@ int Parser::parseConfigurationDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_OF) {
+    if (!lexer.match(TerminalName::RES_OF)) {
         cerr << "Missing of " << endl;
         return PARSE_ERROR;
     }
@@ -308,7 +308,7 @@ int Parser::parseConfigurationDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         cerr << "Missing is " << endl;
         return PARSE_ERROR;
     }
@@ -319,14 +319,14 @@ int Parser::parseConfigurationDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
     // optional
-    if (lexer.peak().getName() == TerminalName::RES_CONFIGURATION) {
+    if (lexer.match(TerminalName::RES_CONFIGURATION)) {
         lexer.pop();
     }
 
@@ -337,7 +337,7 @@ int Parser::parseConfigurationDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after entity declaration" << endl;
         return PARSE_ERROR;
     }
@@ -348,7 +348,7 @@ int Parser::parseConfigurationDeclaration(ASTree* parent) {
 }
 
 int Parser::parsePackageDeclaration(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_PACKAGE) {
+    if (!lexer.match(TerminalName::RES_PACKAGE)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // package
@@ -361,7 +361,7 @@ int Parser::parsePackageDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         cerr << "Missing is " << endl;
         return PARSE_ERROR;
     }
@@ -372,14 +372,14 @@ int Parser::parsePackageDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
     // optional
-    if (lexer.peak().getName() == TerminalName::RES_PACKAGE) {
+    if (lexer.match(TerminalName::RES_PACKAGE)) {
         lexer.pop();
     }
 
@@ -391,7 +391,7 @@ int Parser::parsePackageDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after package declaration" << endl;
         return PARSE_ERROR;
     }
@@ -402,7 +402,7 @@ int Parser::parsePackageDeclaration(ASTree* parent) {
 }
 
 int Parser::parsePackageInstantiationDeclaration(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_PACKAGE) {
+    if (!lexer.match(TerminalName::RES_PACKAGE)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // package
@@ -413,11 +413,11 @@ int Parser::parsePackageInstantiationDeclaration(ASTree* parent) {
     if (result != 0) {
         return PARSE_ERROR;
     }
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         return PARSE_ERROR;
     }
     lexer.pop(); // is
-    if (lexer.peak().getName() != TerminalName::RES_NEW) {
+    if (!lexer.match(TerminalName::RES_NEW)) {
         return PARSE_ERROR;
     }
     lexer.pop(); // new
@@ -434,7 +434,7 @@ int Parser::parsePackageInstantiationDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; in package instantiation" << endl;
         return PARSE_ERROR;
     }
@@ -444,7 +444,7 @@ int Parser::parsePackageInstantiationDeclaration(ASTree* parent) {
 }
 
 int Parser::parseContextDeclaration(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_CONTEXT) {
+    if (!lexer.match(TerminalName::RES_CONTEXT)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // context
@@ -457,7 +457,7 @@ int Parser::parseContextDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         cerr << "Missing is " << endl;
         return PARSE_ERROR;
     }
@@ -469,14 +469,14 @@ int Parser::parseContextDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
     // optional
-    if (lexer.peak().getName() == TerminalName::RES_CONTEXT) {
+    if (lexer.match(TerminalName::RES_CONTEXT)) {
         lexer.pop();
     }
 
@@ -488,7 +488,7 @@ int Parser::parseContextDeclaration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after context declaration" << endl;
         return PARSE_ERROR;
     }
@@ -499,7 +499,7 @@ int Parser::parseContextDeclaration(ASTree* parent) {
 }
 
 int Parser::parseArchitectureBody(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_ARCHITECTURE) {
+    if (!lexer.match(TerminalName::RES_ARCHITECTURE)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // architecture
@@ -510,7 +510,7 @@ int Parser::parseArchitectureBody(ASTree* parent) {
     if (result != 0) {
         return PARSE_ERROR;
     }
-    if (lexer.peak().getName() != TerminalName::RES_OF) {
+    if (!lexer.match(TerminalName::RES_OF)) {
         return PARSE_ERROR;
     }
     lexer.pop(); // of
@@ -521,7 +521,7 @@ int Parser::parseArchitectureBody(ASTree* parent) {
     if (result != 0) {
         return PARSE_ERROR;
     }
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         return PARSE_ERROR;
     }
     lexer.pop(); // is
@@ -531,7 +531,7 @@ int Parser::parseArchitectureBody(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_BEGIN) {
+    if (!lexer.match(TerminalName::RES_BEGIN)) {
         return PARSE_ERROR;
     }
     lexer.pop(); // begin
@@ -540,14 +540,14 @@ int Parser::parseArchitectureBody(ASTree* parent) {
     if (result != 0) {
         return PARSE_ERROR;
     }
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
     // optional
-    if (lexer.peak().getName() == TerminalName::RES_ARCHITECTURE) {
+    if (lexer.match(TerminalName::RES_ARCHITECTURE)) {
         lexer.pop();
     }
 
@@ -559,7 +559,7 @@ int Parser::parseArchitectureBody(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after architecture body" << endl;
         return PARSE_ERROR;
     }
@@ -570,11 +570,11 @@ int Parser::parseArchitectureBody(ASTree* parent) {
 }
 
 int Parser::parsePackageBody(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_PACKAGE) {
+    if (!lexer.match(TerminalName::RES_PACKAGE)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // package
-    if (lexer.peak().getName() != TerminalName::RES_BODY) {
+    if (!lexer.match(TerminalName::RES_BODY)) {
         return PARSE_ERROR;
     }
     lexer.pop(); // body
@@ -586,7 +586,7 @@ int Parser::parsePackageBody(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_IS) {
+    if (!lexer.match(TerminalName::RES_IS)) {
         cerr << "Missing is " << endl;
         return PARSE_ERROR;
     }
@@ -596,16 +596,16 @@ int Parser::parsePackageBody(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
     // optional
-    if (lexer.peak().getName() == TerminalName::RES_PACKAGE) {
+    if (lexer.match(TerminalName::RES_PACKAGE)) {
         lexer.pop();
-        if (lexer.peak().getName() != TerminalName::RES_BODY) {
+        if (!lexer.match(TerminalName::RES_BODY)) {
             cerr << "Missing body " << endl;
             return PARSE_ERROR;
         }
@@ -620,7 +620,7 @@ int Parser::parsePackageBody(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; after package body" << endl;
         return PARSE_ERROR;
     }
@@ -638,7 +638,7 @@ int Parser::parseLogicalNameList(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    while (lexer.peak().getName() == TerminalName::COMMA) {
+    while (lexer.match(TerminalName::COMMA)) {
         lexer.pop(); // comma
         result = parseLogicalName(tree.get());
         if (result != 0) {
@@ -658,7 +658,7 @@ int Parser::parseSelectedName(ASTree* parent) {
         return result;
     }
 
-    while (lexer.peak().getName() == TerminalName::DOT) {
+    while (lexer.match(TerminalName::DOT)) {
         lexer.pop(); // dot
         result = parseSuffix(tree.get());
         if (result != 0) {
@@ -776,7 +776,7 @@ int Parser::parseConfigurationDeclarativePart(ASTree* parent) {
 }
 
 int Parser::parseBlockConfiguration(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_FOR) {
+    if (!lexer.match(TerminalName::RES_FOR)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // for
@@ -807,19 +807,19 @@ int Parser::parseBlockConfiguration(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RES_END) {
+    if (!lexer.match(TerminalName::RES_END)) {
         cerr << "Missing end " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // end
 
-    if (lexer.peak().getName() != TerminalName::RES_FOR) {
+    if (!lexer.match(TerminalName::RES_FOR)) {
         cerr << "Missing for " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // for
 
-    if (lexer.peak().getName() != TerminalName::SEMICOLON) {
+    if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ; " << endl;
         return PARSE_ERROR;
     }
@@ -846,7 +846,7 @@ int Parser::parsePackageDeclarativePart(ASTree* parent) {
 }
 
 int Parser::parseGenericMapAspect(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_GENERIC) {
+    if (!lexer.match(TerminalName::RES_GENERIC)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // generic
@@ -854,13 +854,13 @@ int Parser::parseGenericMapAspect(ASTree* parent) {
     unique_ptr<ASTree> tree(
         new ASTree(parent, GrammarRule::GENERIC_MAP_ASPECT));
 
-    if (lexer.peak().getName() != TerminalName::RES_MAP) {
+    if (!lexer.match(TerminalName::RES_MAP)) {
         cerr << "Missing map " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // map
 
-    if (lexer.peak().getName() != TerminalName::LEFT_PARENTHESIS) {
+    if (!lexer.match(TerminalName::LEFT_PARENTHESIS)) {
         cerr << "Missing ( " << endl;
         return PARSE_ERROR;
     }
@@ -871,7 +871,7 @@ int Parser::parseGenericMapAspect(ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    if (lexer.peak().getName() != TerminalName::RIGHT_PARENTHESIS) {
+    if (!lexer.match(TerminalName::RIGHT_PARENTHESIS)) {
         cerr << "Missing ) " << endl;
         return PARSE_ERROR;
     }
@@ -964,20 +964,20 @@ int Parser::parseSuffix(ASTree* parent) {
 }
 
 int Parser::parseGenericClause(ASTree* parent) {
-    if (lexer.peak().getName() != TerminalName::RES_GENERIC) {
+    if (!lexer.match(TerminalName::RES_GENERIC)) {
         return PARSE_NOMATCH;
     }
     lexer.pop(); // generic
 
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::GENERIC_CLAUSE));
 
-    if (lexer.peak().getName() != TerminalName::LEFT_PARENTHESIS) {
+    if (!lexer.match(TerminalName::LEFT_PARENTHESIS)) {
         cerr << "Missing ( " << endl;
         return PARSE_ERROR;
     }
     lexer.pop(); // (
 
-    if (lexer.peak().getName() != TerminalName::RIGHT_PARENTHESIS) {
+    if (!lexer.match(TerminalName::RIGHT_PARENTHESIS)) {
         cerr << "Missing ) " << endl;
         return PARSE_ERROR;
     }

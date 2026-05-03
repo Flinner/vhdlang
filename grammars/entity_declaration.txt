@@ -18,10 +18,6 @@ entity_statement_part
   : ( entity_statement )*
   ;
 
-generic_clause
-  : GENERIC LPAREN generic_list RPAREN SEMI
-  ;
-
 port_clause
   : PORT LPAREN port_list RPAREN SEMI
   ;
@@ -52,10 +48,6 @@ entity_statement
   : concurrent_assertion_statement
   | process_statement
   | concurrent_procedure_call_statement
-  ;
-
-generic_list
-  : interface_constant_declaration (SEMI interface_constant_declaration)*
   ;
 
 port_list

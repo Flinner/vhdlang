@@ -2,6 +2,7 @@
 #include "vhdlang/ASTree.hpp"
 #include "vhdlang/Lexer.hpp"
 #include <memory>
+#include <iostream>
 
 // Different return values to indicate if we took the wrong option or actual
 // error
@@ -71,5 +72,9 @@ private:
 public:
     Parser(vhdlang::Lexer& lexer) : lexer(lexer) {}
     int parse();
+    void printAST() {
+        astree->print("");
+        std::cout << std::endl;
+    }
 };
 } // namespace vhdlang

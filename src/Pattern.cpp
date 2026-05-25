@@ -37,8 +37,11 @@ int Pattern::parseSeparatedList(
         return PARSE_ERROR;
     }
 
+    // cout << "Before pop from separated list" << endl;
+    // cout << lexer.peak() << endl;
     while (lexer.match(separator)) {
         lexer.pop();
+        // cout << "Popped from separated list" << endl;
         result = parseRule(lexer, tree.get());
         if (result != 0) {
             return PARSE_ERROR;
@@ -49,7 +52,7 @@ int Pattern::parseSeparatedList(
     return 0;
 }
 
-bool Pattern::matchWALRUS(vhdlang::Lexer &lexer) {
+bool Pattern::matchWALRUS(vhdlang::Lexer& lexer) {
     TerminalName tok = lexer.peak().getName();
     TerminalName tok1 = lexer.peakN(1).getName();
     return (tok == TerminalName::COLON && tok1 == TerminalName::EQUAL);

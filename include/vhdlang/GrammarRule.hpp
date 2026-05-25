@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace vhdlang {
 enum class GrammarRule {
     DESIGN_FILE,
@@ -46,6 +48,9 @@ enum class GrammarRule {
     IDENTIFIER_LIST,
     MODE_RULE,
     SUBTYPE_DECLARATION,
-    NAME_PART
+    NAME_PART,
+    SUBTYPE_INDICATION
 };
+
+std::string grammarRuleName(GrammarRule rule);
 } // namespace vhdlang

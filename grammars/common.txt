@@ -167,3 +167,25 @@ name_part
     | LPAREN discrete_range RPAREN                                // slice_name
     | APOSTROPHE attribute_designator (LPAREN expression RPAREN)? // attribute_name
     ;
+
+actual_parameter_part
+    : association_list
+    ;
+
+discrete_range
+    : subtype_indication
+    | range_decl
+    ;
+
+// Need to add tokens here since they will be consumed by the Lexer
+attribute_designator
+    : identifier
+    | RANGE
+    | REVERSE_RANGE
+    | ACROSS
+    | THROUGH
+    | REFERENCE
+    | TOLERANCE
+    | SUBTYPE
+    ;
+

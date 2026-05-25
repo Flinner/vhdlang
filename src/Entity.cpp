@@ -36,10 +36,11 @@ int Entity::parseEntityDeclaration(vhdlang::Lexer& lexer, ASTree* parent) {
         return PARSE_ERROR;
     }
 
-    result = parseEntityDeclarativePart(lexer, tree.get());
-    if (result != 0) {
-        return PARSE_ERROR;
-    }
+    // TODO: implement
+    // result = parseEntityDeclarativePart(lexer, tree.get());
+    // if (result != 0) {
+    //     return PARSE_ERROR;
+    // }
 
     // optional part
     if (lexer.match(TerminalName::RES_BEGIN)) {
@@ -81,7 +82,7 @@ int Entity::parseEntityDeclaration(vhdlang::Lexer& lexer, ASTree* parent) {
 
 int Entity::parseEntityHeader(vhdlang::Lexer& lexer, ASTree* parent) {
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::ENTITY_HEADER));
-    int result = parseGenericClause(lexer, tree.get());
+    int result = Common::parseGenericClause(lexer, tree.get());
     if (result == PARSE_ERROR) {
         return PARSE_ERROR;
     }
@@ -104,13 +105,14 @@ int Entity::parseEntityDeclarativePart(vhdlang::Lexer& lexer, ASTree* parent) {
 }
 
 int Entity::parseEntityStatementPart(vhdlang::Lexer& lexer, ASTree* parent) {
-    return 0;
+    return PARSE_NOMATCH;
 }
 
 int Entity::parsePortClause(vhdlang::Lexer& lexer, ASTree* parent) {
     if (!lexer.match(TerminalName::RES_PORT)) {
         return PARSE_NOMATCH;
     }
+    lexer.pop(); // PORT
 
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::PORT_CLAUSE));
 
@@ -118,26 +120,24 @@ int Entity::parsePortClause(vhdlang::Lexer& lexer, ASTree* parent) {
         cerr << "Missing (" << endl;
         return PARSE_ERROR;
     }
-
     lexer.pop();
-
-    if (!lexer.match(TerminalName::RIGHT_PARENTHESIS)) {
-        cerr << "Missing )" << endl;
-        return PARSE_ERROR;
-    }
 
     int result = parsePortList(lexer, tree.get());
     if (result != 0) {
+        cerr << "Error in parsing port list" << endl;
         return PARSE_ERROR;
     }
 
+    if (!lexer.match(TerminalName::RIGHT_PARENTHESIS)) {
+        cerr << "Missing ) in port clause" << endl;
+        return PARSE_ERROR;
+    }
     lexer.pop();
 
     if (!lexer.match(TerminalName::SEMICOLON)) {
         cerr << "Missing ;" << endl;
         return PARSE_ERROR;
     }
-
     lexer.pop();
 
     parent->addChild(std::move(tree));
@@ -156,14 +156,14 @@ int Entity::parsePortList(vhdlang::Lexer& lexer, ASTree* parent) {
 }
 
 int Entity::parseEntityDeclarativeItem(vhdlang::Lexer& lexer, ASTree* parent) {
-    return 0;
+    return PARSE_NOMATCH;
 }
 
 int Entity::parseEntityStatement(vhdlang::Lexer& lexer, ASTree* parent) {
-    return 0;
+    return PARSE_NOMATCH;
 }
 
 int Entity::parseInterfaceConstantDeclaration(vhdlang::Lexer& lexer,
                                               ASTree* parent) {
-    return 0;
+    return PARSE_NOMATCH;
 }

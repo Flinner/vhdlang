@@ -95,6 +95,7 @@ Token Lexer::pop() {
         if (currentName != TerminalName::WHITESPACE &&
             currentName != TerminalName::COMMENT &&
             currentName != TerminalName::NEWLINE) {
+            // std::cout << "Popping " << token << std::endl;
             return token;
         }
     }
@@ -108,6 +109,7 @@ bool Lexer::match(TerminalName name) {
 }
 
 // n = 0 means next token
+// TODO: change implementation, doesn't work
 const Token Lexer::peakN(int n) {
     while (!tokens.empty()) {
         Token token = tokens.front();

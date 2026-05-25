@@ -1,5 +1,6 @@
 #include "vhdlang/Parser.hpp"
 
+#include "vhdlang/Entity.hpp"
 #include "vhdlang/GrammarRule.hpp"
 #include "vhdlang/NodeIdentifier.hpp"
 #include "vhdlang/Terminal.hpp"
@@ -11,16 +12,21 @@ using namespace std;
 // Starting grammar rule is design file
 int Parser::parse() {
     this->astree = unique_ptr<ASTree>(
-        new ASTree(nullptr, GrammarRule::DESIGN_UNIT));
-    return parseDesignFile(this->astree.get());
+        new ASTree(nullptr, GrammarRule::DESIGN_FILE));
+    int result = parseDesignFile(this->astree.get());
+    if (result == PARSE_ERROR) {
+        cout << "Error at " << lexer.peak() << std::endl;
+    }
+    return result;
 }
 
 int Parser::parseDesignFile(ASTree* root) {
     int result = parseDesignUnit(root);
-    while (result == 0) {
-        result = parseDesignUnit(root);
-    }
-    return (result == PARSE_NOMATCH) ? 0 : PARSE_ERROR;
+    // while (result == 0) {
+    //     result = parseDesignUnit(root);
+    //     cout << "second result is " << result << endl;
+    // }
+    return (result == PARSE_NOMATCH || result == 0) ? 0 : PARSE_ERROR;
 }
 
 int Parser::parseDesignUnit(ASTree* parent) {
@@ -39,27 +45,28 @@ int Parser::parseDesignUnit(ASTree* parent) {
 }
 
 int Parser::parseContextClause(ASTree* parent) {
-    unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::CONTEXT_CLAUSE));
-    int result = parseContextItem(tree.get());
-    bool match = false; // Matched at least once
-    while (result == 0) {
-        result = parseContextItem(tree.get());
-        match = true;
-    }
-    if (result == PARSE_NOMATCH && match) {
-        parent->addChild(std::move(tree));
-        return 0;
-    }
-    return result;
+    return 0;
+    // unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::CONTEXT_CLAUSE));
+    // int result = parseContextItem(tree.get());
+    // bool match = false; // Matched at least once
+    // while (result == 0) {
+    //     result = parseContextItem(tree.get());
+    //     match = true;
+    // }
+    // if (result == PARSE_NOMATCH && match) {
+    //     parent->addChild(std::move(tree));
+    //     return 0;
+    // }
+    // return result;
 }
 
 int Parser::parseLibraryUnit(ASTree* parent) {
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::LIBRARY_UNIT));
     int result = parsePrimaryUnit(tree.get());
 
-    if (result == PARSE_NOMATCH) {
-        result = parseSecondaryUnit(tree.get());
-    }
+    // if (result == PARSE_NOMATCH) {
+    //     result = parseSecondaryUnit(tree.get());
+    // }
 
     if (result == 0) {
         parent->addChild(std::move(tree));
@@ -88,23 +95,23 @@ int Parser::parseContextItem(ASTree* parent) {
 // TODO: psl verification unit
 int Parser::parsePrimaryUnit(ASTree* parent) {
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::PRIMARY_UNIT));
-    int result = parseEntityDeclaration(tree.get());
+    int result = Entity::parseEntityDeclaration(lexer, tree.get());
 
-    if (result == PARSE_NOMATCH) {
-        result = parseConfigurationDeclaration(tree.get());
-    }
-
-    if (result == PARSE_NOMATCH) {
-        result = parsePackageDeclaration(tree.get());
-    }
-
-    if (result == PARSE_NOMATCH) {
-        result = parsePackageInstantiationDeclaration(tree.get());
-    }
-
-    if (result == PARSE_NOMATCH) {
-        result = parseContextDeclaration(tree.get());
-    }
+    // if (result == PARSE_NOMATCH) {
+    //     result = parseConfigurationDeclaration(tree.get());
+    // }
+    //
+    // if (result == PARSE_NOMATCH) {
+    //     result = parsePackageDeclaration(tree.get());
+    // }
+    //
+    // if (result == PARSE_NOMATCH) {
+    //     result = parsePackageInstantiationDeclaration(tree.get());
+    // }
+    //
+    // if (result == PARSE_NOMATCH) {
+    //     result = parseContextDeclaration(tree.get());
+    // }
 
     if (result == 0) {
         parent->addChild(std::move(tree));
@@ -982,6 +989,14 @@ int Parser::parseGenericClause(ASTree* parent) {
         return PARSE_ERROR;
     }
     lexer.pop(); // )
+
+    if (!lexer.match(TerminalName::SEMICOLON)) {
+        cerr << "Missing ; " << endl;
+        return PARSE_ERROR;
+    }
+    lexer.pop(); // ;
+    parent->addChild(std::move(tree));
+    return 0;
 }
 
 int Parser::parsePortClause(ASTree* parent) {
@@ -1028,9 +1043,7 @@ int Parser::parseArchitectureStatement(ASTree* parent) {
     unique_ptr<ASTree> tree(
         new ASTree(parent, GrammarRule::ARCHITECTURE_STATEMENT));
 
-    int result = parseBlockStatement(tree.get());
-
-    
+    // int result = parseBlockStatement(tree.get());
 
     return 0;
 }

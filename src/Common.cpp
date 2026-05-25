@@ -45,7 +45,7 @@ int Common::parsePackageDeclaration(vhdlang::Lexer& lexer, ASTree* parent) {
     }
 
     lexer.pop(); // is
-    result = parsePackageDeclarativePart(tree.get());
+    result = parsePackageDeclarativePart(lexer, tree.get());
     if (result != 0) {
         return PARSE_ERROR;
     }
@@ -63,7 +63,7 @@ int Common::parsePackageDeclaration(vhdlang::Lexer& lexer, ASTree* parent) {
 
     // optional
     // package
-    result = parseIdentifier(tree.get());
+    result = parseIdentifier(lexer, tree.get());
 
     if (result == PARSE_ERROR) {
         return PARSE_ERROR;
@@ -124,7 +124,7 @@ int Common::parsePackageBody(vhdlang::Lexer& lexer, ASTree* parent) {
 
     // optional
     // package
-    result = parseIdentifier(tree.get());
+    result = parseIdentifier(lexer, tree.get());
 
     if (result == PARSE_ERROR) {
         return PARSE_ERROR;
@@ -149,7 +149,7 @@ int Common::parsePackageInstantiationDeclaration(vhdlang::Lexer& lexer,
 
     unique_ptr<ASTree> tree(
         new ASTree(parent, GrammarRule::PACKAGE_INSTANTIATION_DECLARATION));
-    int result = parseIdentifier(tree.get());
+    int result = parseIdentifier(lexer, tree.get());
     if (result != 0) {
         return PARSE_ERROR;
     }
@@ -162,13 +162,13 @@ int Common::parsePackageInstantiationDeclaration(vhdlang::Lexer& lexer,
     }
     lexer.pop(); // new
     // uninstantiated_package
-    result = parseName(tree.get());
+    result = parseName(lexer, tree.get());
     if (result != 0) {
         return PARSE_ERROR;
     }
 
     // optional
-    result = parseGenericMapAspect(tree.get());
+    result = parseGenericMapAspect(lexer, tree.get());
 
     if (result == PARSE_ERROR) {
         return PARSE_ERROR;
@@ -178,6 +178,7 @@ int Common::parsePackageInstantiationDeclaration(vhdlang::Lexer& lexer,
         cerr << "Missing ; in package instantiation" << endl;
         return PARSE_ERROR;
     }
+    lexer.pop(); // semicolon
 
     parent->addChild(std::move(tree));
     return 0;
@@ -190,7 +191,7 @@ int Common::parseUseClause(vhdlang::Lexer& lexer, ASTree* parent) {
 
     lexer.pop();
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::USE_CLAUSE));
-    int result = parseSelectedName(tree.get());
+    int result = parseSelectedName(lexer, tree.get());
 
     if (result != 0) {
         return PARSE_ERROR;
@@ -198,7 +199,7 @@ int Common::parseUseClause(vhdlang::Lexer& lexer, ASTree* parent) {
 
     while (lexer.match(TerminalName::COMMA)) {
         lexer.pop(); // comma
-        result = parseSelectedName(tree.get());
+        result = parseSelectedName(lexer, tree.get());
         if (result != 0) {
             return PARSE_ERROR;
         }
@@ -220,7 +221,7 @@ int Common::parseInterfaceList(vhdlang::Lexer& lexer, ASTree* parent) {
                                        parseInterfaceDeclaration);
 }
 
-// TODO: Incomplete
+// TODO: Incomplete, use switch instead
 int Common::parseInterfaceDeclaration(vhdlang::Lexer& lexer, ASTree* parent) {
     unique_ptr<ASTree> tree(
         new ASTree(parent, GrammarRule::INTERFACE_DECLARATION));
@@ -246,6 +247,7 @@ int Common::parseInterfaceDeclaration(vhdlang::Lexer& lexer, ASTree* parent) {
     return result;
 }
 
+// TODO: Incomplete, use switch instead
 int Common::parseInterfaceObjectDeclaration(vhdlang::Lexer& lexer,
                                             ASTree* parent) {
     unique_ptr<ASTree> tree(
@@ -291,6 +293,7 @@ int Common::parseInterfaceSignalDeclaration(vhdlang::Lexer& lexer,
         cerr << "Missing :" << endl;
         return PARSE_ERROR;
     }
+    lexer.pop(); // :
 
     // TODO: work with the result
     result = parseModeRule(lexer, tree.get());
@@ -307,13 +310,13 @@ int Common::parseInterfaceSignalDeclaration(vhdlang::Lexer& lexer,
     }
 
     // optional
-    if (Pattern::matchWALRUS(lexer)) {
-        lexer.pop();
-        result = parseExpression(lexer, tree.get());
-        if (result != 0) {
-            return PARSE_ERROR;
-        }
-    }
+    // if (Pattern::matchWALRUS(lexer)) {
+    //     lexer.pop();
+    //     result = parseExpression(lexer, tree.get());
+    //     if (result != 0) {
+    //         return PARSE_ERROR;
+    //     }
+    // }
 
     parent->addChild(std::move(tree));
     return 0;
@@ -344,17 +347,26 @@ int Common::parseModeRule(vhdlang::Lexer& lexer, ASTree* parent) {
     return 0;
 }
 
+// TODO: incomplete
 int Common::parseSubtypeIndication(vhdlang::Lexer& lexer, ASTree* parent) {
     unique_ptr<ASTree> tree(
-        new ASTree(parent, GrammarRule::SUBTYPE_DECLARATION));
+        new ASTree(parent, GrammarRule::SUBTYPE_INDICATION));
 
-    int result = parseResolutionIndication(lexer, tree.get());
+    // int result = parseResolutionIndication(lexer, tree.get());
+    //
+    // if (result == PARSE_ERROR) {
+    //     return PARSE_ERROR;
+    // }
 
-    if (result == PARSE_ERROR) {
+    int result = parseName(lexer, tree.get());
+
+    if (result != 0) {
+        cerr << "Error in parsing subtype" << endl;
         return PARSE_ERROR;
     }
 
-    result = parseName(lexer, tree.get());
+    parent->addChild(std::move(tree));
+    return 0;
 }
 
 int Common::parseName(vhdlang::Lexer& lexer, ASTree* parent) {
@@ -383,13 +395,14 @@ int Common::parseName(vhdlang::Lexer& lexer, ASTree* parent) {
 
     parent->addChild(std::move(tree));
 
-    return result;
+    return 0;
 }
 
-int parseNamePart(vhdlang::Lexer& lexer, ASTree* parent) {
+int Common::parseNamePart(vhdlang::Lexer& lexer, ASTree* parent) {
 
     unique_ptr<ASTree> tree(new ASTree(parent, GrammarRule::NAME_PART));
     TerminalName tok = lexer.peak().getName();
+    int result;
 
     switch (tok) {
         case TerminalName::DOT:
@@ -399,9 +412,38 @@ int parseNamePart(vhdlang::Lexer& lexer, ASTree* parent) {
                                                TerminalName::DOT, parseSuffix);
             break;
         case TerminalName::LEFT_PARENTHESIS:
+            lexer.pop();
+            result = parseActualParameterPart(lexer, tree.get());
+            if (result == PARSE_NOMATCH) {
+                result = parseDiscreteRange(lexer, tree.get());
+            }
+            if (result != 0) {
+                cerr << "Error in parsing name" << endl;
+                return PARSE_ERROR;
+            }
+
+            if (!lexer.match(TerminalName::RIGHT_PARENTHESIS)) {
+                cerr << "Missing ) in Name Part" << endl;
+                return PARSE_ERROR;
+            }
+            break;
         case TerminalName::SINGLE_QUOTE:
+            lexer.pop();
+            result = parseAttributeDesignator(lexer, tree.get());
+            if (result != 0) {
+                cerr << "Missing attribute designator" << endl;
+                return PARSE_ERROR;
+            }
+            // TODO: add optional expression parsing rule here
+            break;
 
         default:
             return PARSE_NOMATCH;
     }
+
+    if (result == 0) {
+        parent->addChild(std::move(tree));
+    }
+
+    return 0;
 }
